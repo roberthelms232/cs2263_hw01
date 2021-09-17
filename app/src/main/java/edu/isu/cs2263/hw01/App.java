@@ -9,6 +9,7 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.util.Scanner;
 
 public class App {
@@ -41,10 +42,10 @@ public class App {
                                 "-o,--output <file>   output file");
                     }else{
                         if(line.hasOption("b")){
-                            System.out.println("Batch value: " + args[1]);
+                            batch(args);
                         }
                         else if(line.hasOption("o")){
-                            System.out.println("Output value: " + args[1]);
+                            output(args);
                         }
                     }
                 }
@@ -148,4 +149,41 @@ public class App {
         }
 
     }
+    public static void output(String[] args){
+        String lib = args[2];
+
+        File outFile = new File(lib);
+        Scanner osc = new Scanner(System.in);
+        try{
+            outFile.createNewFile();
+            FileWriter outWrite = new FileWriter(lib);
+
+            //starting instructions
+            System.out.println("\nEnter \nExit\n to exit the program");
+            System.out.println("Separate numbers and operators by spaces");
+
+            //run until user exits
+            while(true){
+                System.out.println("> ");
+                String evalExpression = osc.nextLine();
+                //user exits
+                if("exit".equals(evalExpression)){
+                    break;
+                }
+
+                outWrite.append(evalExpression + "\n");
+                String[] strArray = evalExpression.split(" ");
+
+                if(strArray.length > 2){
+                    outWrite.append("> " + evaluate(strArray) + "\n");
+
+                }
+            }
+            osc.close();
+        }
+        catch(Exception exp){
+            System.out.println("Exception: " + exp.getMessage());
+        }
+    }
+
 }
