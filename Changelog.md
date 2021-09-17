@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.0] - 2021-09-17
+### Added 
+- Implemented method to output to a selected file or create a new ouput file
+- Added output component to the evaluator
+### Modified
+- Changed original batch and output checks to now use the batch and output methods
 ## [1.1.0] - 2021-09-17
 ### Added
 - Implemented methods to evaluate expressions from left to right
