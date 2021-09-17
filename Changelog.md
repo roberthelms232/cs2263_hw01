@@ -6,6 +6,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.0] - 2021-09-17
+### Added
+- Implemented methods to evaluate expressions from left to right
+- Added ability to input expressions via the command prompt
+- Implemented the ability to input a batch of expressions from a file
+### Modified
+- Adjusted checks for the commands to be included in the evaluation checks
+
 ## [1.0.0] - 2021-09-17
 ### Added
 - implemented Apache Commons CLI
