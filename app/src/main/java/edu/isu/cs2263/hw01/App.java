@@ -8,6 +8,9 @@ import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import java.io.File;
+import java.util.Scanner;
+
 public class App {
 
     public static void main(String[] args) {
@@ -23,25 +26,126 @@ public class App {
 
         try{
             CommandLine line = parser.parse(options, args);
+            Scanner sc = new Scanner(System.in);
 
-            if(line.hasOption("h")){
-                System.out.println("usage: eval [OPTIONS]\n" +
-                        "Evaluation of simple mathematical expressions\n" +
-                        "\n" +
-                        "-b,--batch <file>    batch file containing expressions to evaluate\n" +
-                        "-h,--help            print usage message\n" +
-                        "-o,--output <file>   output file");
-            }else{
-                if(line.hasOption("b")){
-                    System.out.println("Batch value: " + args[1]);
+            //Check for eval
+            if("eval".equals(args[0])){
+                //check if anything more than eval was used
+                if(args.length > 1 && ("-h".equals(args[1]) || "-b".equals(args[1]) || "-o".equals(args[1]) || "--help".equals(args[1]) || "--batch".equals(args[1]) || "--output".equals(args[1]))){
+                    if(line.hasOption("h")){
+                        System.out.println("usage: eval [OPTIONS]\n" +
+                                "Evaluation of simple mathematical expressions\n" +
+                                "\n" +
+                                "-b,--batch <file>    batch file containing expressions to evaluate\n" +
+                                "-h,--help            print usage message\n" +
+                                "-o,--output <file>   output file");
+                    }else{
+                        if(line.hasOption("b")){
+                            System.out.println("Batch value: " + args[1]);
+                        }
+                        else if(line.hasOption("o")){
+                            System.out.println("Output value: " + args[1]);
+                        }
+                    }
                 }
-                if(line.hasOption("o")){
-                    System.out.println("Output value: " + args[1]);
+            }
+            //if only eval was passed in or no commands given
+            else{
+                //starting instructions
+                System.out.println("\nEnter \nExit\n to exit the program");
+                System.out.println("Separate numbers and operators by spaces");
+
+                //run until user exits
+                while(true){
+                    try{
+                        System.out.println("> ");
+                        String evalExpression = sc.nextLine();
+
+                        //End if user exits
+                        if("exit".equals(evalExpression)){
+                            break;
+                        }
+
+                        String[] strs = evalExpression.split(" ");
+
+                        if(strs.length > 2){
+                            evaluate(strs);
+                        }
+                        else{
+                            throw new Exception("Equations requires 2 numbers and an operator");
+                        }
+                    }
+                    catch(Exception exp){
+                        System.out.println("Exception: " + exp.getMessage());
+                    }
+
                 }
             }
         }
         catch(ParseException exp){
-            System.out.println(exp);
+            System.out.println(exp.getMessage());
         }
+
+
+    }
+    public static String evaluate(String[] expression){
+        try{
+            for(int x = 0; x < expression.length -1; x =x +2){
+                String operation = expression[x + 1];
+
+                double fNum = Double.parseDouble(expression[x]);
+                double sNum = Double.parseDouble(expression[x+2]);
+
+                //Check the operations
+                if(operation.equals("*")){
+                    expression[x+2] = String.valueOf(fNum * sNum);
+                }else if(operation.equals("/")){
+                    expression[x+2] = String.valueOf(fNum / sNum);
+                }else if(operation.equals("+")){
+                    expression[x+2] = String.valueOf(fNum + sNum);
+                }else if(operation.equals("-")){
+                    expression[x+2] = String.valueOf(fNum - sNum);
+                }
+                else{
+                    throw new Exception("Provide usable operator: *, /, +, -");
+                }
+            }
+            System.out.println("> " + expression[expression.length -1]);
+        }
+        catch(Exception exp){
+            System.out.println("Exception" + exp.getMessage());
+        }
+        return expression[expression.length -1];
+    }
+
+    public static void batch(String[] args){
+        String lib = args[2];
+
+        File batchFile = new File(lib);
+        try{
+            if(batchFile.exists()){
+                Scanner bsc = new Scanner(batchFile);
+
+                while(bsc.hasNextLine()){
+                    String line = bsc.nextLine();
+                    String[] array = line.split(" ");
+                    if(array.length > 2){
+                        System.out.println("> " + line);
+                        evaluate(array);
+                    }
+                    else{
+                        throw new Exception("Please provide at least 2 numbers and and operator");
+                    }
+                }
+                bsc.close();
+            }
+            else {
+                throw new Exception("File does not exist");
+            }
+        }
+        catch(Exception exp){
+            System.out.println("Exception: " + exp.getMessage());
+        }
+
     }
 }
